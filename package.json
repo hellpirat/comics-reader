@@ -6,10 +6,12 @@
     "build": "tsc && vite build",
     "serve": "vite preview",
     "re:build": "rescript",
-    "re:start": "rescript build -w"
+    "re:start": "rescript build -w",
+    "start:electron": "electron src/electron"
   },
   "dependencies": {
     "@rescript/react": "^0.10.3",
+    "electron": "^13.2.3",
     "react": "^17.0.0",
     "react-dom": "^17.0.0"
   },

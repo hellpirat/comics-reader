@@ -13,7 +13,8 @@
     "@rescript/react": "^0.10.3",
     "electron": "^13.2.3",
     "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react-dom": "^17.0.0",
+    "vite-plugin-commonjs-externals": "^0.1.1"
   },
   "devDependencies": {
     "@types/react": "^17.0.0",

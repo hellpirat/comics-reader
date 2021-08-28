@@ -1,6 +1,10 @@
+open FoldersApi
+
 @react.component
 let make = () => {
     let (count, setCount) = React.useState(() => 0)
+    let folders = FolderApi.getDirectories()
+    Js.log(folders)
 
     <div>
         <Header />

@@ -26,3 +26,5 @@ module Stats = {
 @module("fs") external readdirSync: string => array<string> = "readdirSync"
 
 @module("fs") external statSync: string => Stats.t = "statSync"
+
+@module("fs") external mkdirSync: string => unit = "mkdirSync"

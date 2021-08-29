@@ -4,4 +4,8 @@ module FolderApi = {
       FS.statSync(Path.join2(srcPath, file))->FS.Stats.isDirectory
     )
   }
+
+  let create = name => {
+    FS.mkdirSync(name)
+  }
 }

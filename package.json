@@ -14,7 +14,8 @@
     "electron": "^13.2.3",
     "lodash": "^4.17.21",
     "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react-dom": "^17.0.0",
+    "rescript-classnames": "^6.0.0"
   },
   "devDependencies": {
     "@types/react": "^17.0.0",

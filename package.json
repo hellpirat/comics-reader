@@ -7,7 +7,7 @@
     "serve": "vite preview",
     "re:build": "rescript",
     "re:start": "rescript build -w",
-    "start:electron": "electron src/electron"
+    "el:start": "electron src/electron"
   },
   "dependencies": {
     "@rescript/react": "^0.10.3",

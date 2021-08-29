@@ -4,8 +4,6 @@ import reactRefresh from "@vitejs/plugin-react-refresh";
 import electron from "vitejs-plugin-electron";
 
 import builtinModules from "builtin-modules";
-// For two package.json structure
-// For single package.json structure
 import pkg from "./package.json";
 import commonjsExternals from "vite-plugin-commonjs-externals";
 

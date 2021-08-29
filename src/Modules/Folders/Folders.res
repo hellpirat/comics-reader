@@ -19,12 +19,18 @@ let make = () => {
     </TableRow>
   })
 
-  <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-    <Table tableLayout={#fixed}>
-      <THead>
-        <TableRow hover={false}> <THeadCol> {"Name"->React.string} </THeadCol> </TableRow>
-      </THead>
-      <TBody> {tableBody->React.array} </TBody>
-    </Table>
+  <div>
+    <div className="flex items-center justify-between">
+      <h1> {"Directories"->React.string} </h1>
+      <Button variant={#success}> {"Add new directory"->React.string} </Button>
+    </div>
+    <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+      <Table tableLayout={#fixed}>
+        <THead>
+          <TableRow hover={false}> <THeadCol> {"Name"->React.string} </THeadCol> </TableRow>
+        </THead>
+        <TBody> {tableBody->React.array} </TBody>
+      </Table>
+    </div>
   </div>
 }

@@ -11,7 +11,7 @@ let make = () => {
   let folders = FolderApi.getDirectories("./manga")
   Js.log(folders)
 
-  <div>
+  <div className="flex">
     <Header />
     <button type_="button" onClick={_ => setCount(prev => prev + 1)}> {React.int(count)} </button>
   </div>

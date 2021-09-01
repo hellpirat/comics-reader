@@ -4,7 +4,7 @@ let make = () => {
 
   <MainLayout>
     {switch url.path {
-    | list{} => <Folders />
+    | list{} => <Directories />
     | _ => <div> {"Not Found"->React.string} </div>
     }}
   </MainLayout>

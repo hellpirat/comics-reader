@@ -1,4 +1,4 @@
-open FoldersApi
+open DirectoriesApi
 open UseToggle
 
 let makeDirPath = (directories: array<string>) => {
@@ -16,7 +16,7 @@ let make = () => {
   Js.log(makeDirPath(currentDirectory))
 
   React.useEffect2(() => {
-    let res: array<string> = FolderApi.getDirectories(makeDirPath(currentDirectory))
+    let res: array<string> = DirectoriesApi.getDirectories(makeDirPath(currentDirectory))
     setFolders(_ => res)
     setValue(_ => "")
 
@@ -35,7 +35,7 @@ let make = () => {
 
   let handleSave = event => {
     ReactEvent.Mouse.preventDefault(event)
-    FolderApi.create(`${makeDirPath(currentDirectory)}/${value}`)
+    DirectoriesApi.createDirectory(`${makeDirPath(currentDirectory)}/${value}`)
     onClose()
   }
 

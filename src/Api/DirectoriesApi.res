@@ -8,4 +8,12 @@ module DirectoriesApi = {
   let createDirectory = name => {
     FS.mkdirSync(name)
   }
+
+  let renameDirectory = (old, new) => {
+    FS.renameSync(old, new)
+  }
+
+  let removeDirectory = directory => {
+    FS.rmSync(directory)
+  }
 }

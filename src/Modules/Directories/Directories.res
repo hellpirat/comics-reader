@@ -12,8 +12,8 @@ let make = () => {
   let (currentDirectory, setCurrentDirectory) = React.useState(() => ["./manga"])
 
   let {value: isOpen, onOpen, onClose} = useToggle()
-
-  Js.log(makeDirPath(currentDirectory))
+    
+  let isRootDir = Belt.Array.length(currentDirectory) === 1 // ./manga
 
   React.useEffect2(() => {
     let res: array<string> = DirectoriesApi.getDirectories(makeDirPath(currentDirectory))
@@ -54,7 +54,7 @@ let make = () => {
     setCurrentDirectory(prev => Js.Array2.filteri(prev, (_, arrIndex) => arrIndex <= targetIndex))
   }
 
-  let lengthDirectories = Js.Array2.length(currentDirectory)
+  let lengthDirectories = Belt.Array.length(currentDirectory)
 
   let renderBreadcrumbs = Belt.Array.mapWithIndex(currentDirectory, (index, directory) => {
     <>

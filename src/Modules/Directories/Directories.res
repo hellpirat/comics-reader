@@ -12,8 +12,10 @@ let make = () => {
   let (currentDirectory, setCurrentDirectory) = React.useState(() => ["./manga"])
 
   let {value: isOpen, onOpen, onClose} = useToggle()
-    
+
   let isRootDir = Belt.Array.length(currentDirectory) === 1 // ./manga
+  let isMangeDir = Belt.Array.length(currentDirectory) === 2 // ./manga/naruto
+  let isChapterDir = Belt.Array.length(currentDirectory) === 3 // ./mango/naruto/chapter1
 
   React.useEffect2(() => {
     let res: array<string> = DirectoriesApi.getDirectories(makeDirPath(currentDirectory))
@@ -70,6 +72,16 @@ let make = () => {
     </>
   })
 
+  let renderAddButton = if isRootDir {
+    <Button variant={#success} onClick={handleAdd}> {"Add new manga"->React.string} </Button>
+  } else if isMangeDir {
+    <Button variant={#success} onClick={handleAdd}> {"Add new chapter"->React.string} </Button>
+  } else if isChapterDir {
+    <Button variant={#success} onClick={handleAdd}> {"Upload"->React.string} </Button>
+  } else {
+    React.null
+  }
+
   <>
     <div className="flex items-center justify-between">
       <div className="mt-0 mb-2">
@@ -77,7 +89,7 @@ let make = () => {
           {"Directories"->React.string}
         </h1>
       </div>
-      <Button variant={#success} onClick={handleAdd}> {"Add new directory"->React.string} </Button>
+      {renderAddButton}
     </div>
     <div className="mt-0 mb-2">
       <nav ariaLabel="breadcrumb">

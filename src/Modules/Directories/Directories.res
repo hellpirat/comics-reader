@@ -1,5 +1,7 @@
 open DirectoriesApi
 open UseToggle
+open Promise
+open ImagesApi
 
 let makeDirPath = (directories: array<string>) => {
   Js.Array2.joinWith(directories, "/")
@@ -9,16 +11,18 @@ let makeDirPath = (directories: array<string>) => {
 let make = () => {
   let (folders, setFolders) = React.useState(() => [])
   let (value, setValue) = React.useState(() => "")
-  let (currentDirectory, setCurrentDirectory) = React.useState(() => ["./manga"])
+  let (currentDirectory, setCurrentDirectory) = React.useState(() => ["./comics"])
 
   let {value: isOpen, onOpen, onClose} = useToggle()
 
-  let isRootDir = Belt.Array.length(currentDirectory) === 1 // ./manga
-  let isMangeDir = Belt.Array.length(currentDirectory) === 2 // ./manga/naruto
-  let isChapterDir = Belt.Array.length(currentDirectory) === 3 // ./mango/naruto/chapter1
+  let isRootDir = Belt.Array.length(currentDirectory) === 1 // ./comics
+  let isMangeDir = Belt.Array.length(currentDirectory) === 2 // ./comics/naruto
+  let isChapterDir = Belt.Array.length(currentDirectory) === 3 // ./comics/naruto/chapter1
+
+  let currentDirectoryPath = makeDirPath(currentDirectory)
 
   React.useEffect2(() => {
-    let res: array<string> = DirectoriesApi.getDirectories(makeDirPath(currentDirectory))
+    let res: array<string> = DirectoriesApi.getDirectories(currentDirectoryPath)
     setFolders(_ => res)
     setValue(_ => "")
 
@@ -37,7 +41,7 @@ let make = () => {
 
   let handleSave = event => {
     ReactEvent.Mouse.preventDefault(event)
-    DirectoriesApi.createDirectory(`${makeDirPath(currentDirectory)}/${value}`)
+    DirectoriesApi.createDirectory(`${currentDirectoryPath}/${value}`)
     onClose()
   }
 
@@ -54,6 +58,36 @@ let make = () => {
   let handleBreadcrumbClick = (event, targetIndex) => {
     ReactEvent.Mouse.preventDefault(event)
     setCurrentDirectory(prev => Js.Array2.filteri(prev, (_, arrIndex) => arrIndex <= targetIndex))
+  }
+
+  let handleUpload = event => {
+    ReactEvent.Mouse.preventDefault(event)
+
+    let remote = Electron.remote
+    let dialog = remote.dialog
+
+    dialog.showOpenDialog({
+      properties: ["openFile", "multiSelections"],
+      filters: [{name: "Images", extensions: ["jpg"]}],
+    })
+    ->Promise.then(result => {
+      let {canceled, filePaths} = result
+      if !canceled {
+        // TODO: add try/catch
+        Belt.Array.forEach(filePaths, path => {
+          Js.log(path)
+          let splitedPath = path->Js.String2.split("/")
+          let fileName = Belt.Array.get(splitedPath, Belt.Array.length(splitedPath) - 1)
+          switch fileName {
+          | Some(fileName) => ImagesApi.uploadToFolder(path, currentDirectoryPath, fileName)
+
+          | None => Js.Exn.raiseError("Bad file name")
+          }
+        })
+      }
+      resolve()
+    })
+    ->ignore
   }
 
   let lengthDirectories = Belt.Array.length(currentDirectory)
@@ -77,7 +111,7 @@ let make = () => {
   } else if isMangeDir {
     <Button variant={#success} onClick={handleAdd}> {"Add new chapter"->React.string} </Button>
   } else if isChapterDir {
-    <Button variant={#success} onClick={handleAdd}> {"Upload"->React.string} </Button>
+    <Button variant={#success} onClick={handleUpload}> {"Upload"->React.string} </Button>
   } else {
     React.null
   }

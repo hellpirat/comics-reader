@@ -10,7 +10,7 @@
   },
   "suffix": ".bs.js",
   "reason": { "react-jsx": 3 },
-  "bs-dependencies": ["@rescript/react",  "rescript-classnames"],
+  "bs-dependencies": ["@ryyppy/rescript-promise", "@rescript/react",  "rescript-classnames"],
   "warnings": {
     "error": "+101"
   }

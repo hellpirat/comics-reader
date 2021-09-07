@@ -11,6 +11,7 @@ function createWindow() {
       // https://www.electronjs.org/docs/tutorial/security#isolation-for-untrusted-content
       nodeIntegration: true,
       contextIsolation: false,
+      enableRemoteModule: true,
       //   preload: path.join(__dirname, "preload.js"),
     },
   });

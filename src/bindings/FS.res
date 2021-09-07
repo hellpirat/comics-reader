@@ -39,3 +39,8 @@ type rm_options = {
 }
 
 @module("fs") external rmSync: (string, rm_options) => unit = "rmSync"
+
+@module("fs") external copyFileSync: (string, string) => unit = "copyFileSync"
+
+// TODO: Returns: <fs.ReadStream> See Readable Stream.
+@module("fs") external createReadStream: string => string = "createReadStream"

@@ -8,3 +8,5 @@
 @module("path") external join: array<string> => string = "join"
 
 @module("path") external join2: (string, string) => string = "join"
+
+@module("path") external extname: string => string = "extname"

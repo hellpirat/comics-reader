@@ -15,19 +15,27 @@ let make = () => {
 
   let {value: isOpen, onOpen, onClose} = useToggle()
 
-  let isRootDir = Belt.Array.length(currentDirectory) === 1 // ./comics
-  let isMangeDir = Belt.Array.length(currentDirectory) === 2 // ./comics/naruto
-  let isChapterDir = Belt.Array.length(currentDirectory) === 3 // ./comics/naruto/chapter1
+  let lengthDirectories = Belt.Array.length(currentDirectory)
+
+  let isRootDir = lengthDirectories === 1 // ./comics
+  let isMangeDir = lengthDirectories === 2 // ./comics/naruto
+  let isChapterDir = lengthDirectories === 3 // ./comics/naruto/chapter1
 
   let currentDirectoryPath = makeDirPath(currentDirectory)
 
-  React.useEffect2(() => {
-    let res: array<string> = DirectoriesApi.getDirectories(currentDirectoryPath)
-    setFolders(_ => res)
+  React.useEffect3(() => {
+    if isChapterDir {
+      let res: array<string> = ImagesApi.getImages(currentDirectoryPath)
+      setFolders(_ => res)
+    } else {
+      let res: array<string> = DirectoriesApi.getDirectories(currentDirectoryPath)
+      setFolders(_ => res)
+    }
+
     setValue(_ => "")
 
     None
-  }, (isOpen, currentDirectory))
+  }, (isOpen, currentDirectory, isChapterDir))
 
   let handleAdd = event => {
     ReactEvent.Mouse.preventDefault(event)
@@ -89,8 +97,6 @@ let make = () => {
     })
     ->ignore
   }
-
-  let lengthDirectories = Belt.Array.length(currentDirectory)
 
   let renderBreadcrumbs = Belt.Array.mapWithIndex(currentDirectory, (index, directory) => {
     <>

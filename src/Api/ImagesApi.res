@@ -1,7 +1,7 @@
 module ImagesApi = {
   let getImages = srcPath => {
     Js.Array2.filter(FS.readdirSync(srcPath), file => {
-      let extension = file->Js.String2.toLowerCase->Path.extname
+      let extension = file->Path.extname->Js.String2.toLowerCase
       extension == ".jpg"
     })
   }

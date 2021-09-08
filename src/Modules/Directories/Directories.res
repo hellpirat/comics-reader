@@ -11,14 +11,14 @@ let makeDirPath = (directories: array<string>) => {
 let make = () => {
   let (folders, setFolders) = React.useState(() => [])
   let (value, setValue) = React.useState(() => "")
-  let (currentDirectory, setCurrentDirectory) = React.useState(() => ["./comics"])
+  let (currentDirectory, setCurrentDirectory) = React.useState(() => ["comics"])
 
   let {value: isOpen, onOpen, onClose} = useToggle()
 
   let lengthDirectories = Belt.Array.length(currentDirectory)
 
   let isRootDir = lengthDirectories === 1 // ./comics
-  let isMangeDir = lengthDirectories === 2 // ./comics/naruto
+  let isMangaDir = lengthDirectories === 2 // ./comics/naruto
   let isChapterDir = lengthDirectories === 3 // ./comics/naruto/chapter1
 
   let currentDirectoryPath = makeDirPath(currentDirectory)
@@ -53,6 +53,11 @@ let make = () => {
     onClose()
   }
 
+  let handleRead = event => {
+    ReactEvent.Mouse.preventDefault(event)
+    RescriptReactRouter.push(`/${currentDirectoryPath}`)
+  }
+
   let handleInputChange = event => {
     ReactEvent.Form.preventDefault(event)
     let value = ReactEvent.Form.target(event)["value"]
@@ -83,12 +88,10 @@ let make = () => {
       if !canceled {
         // TODO: add try/catch
         Belt.Array.forEach(filePaths, path => {
-          Js.log(path)
           let splitedPath = path->Js.String2.split("/")
           let fileName = Belt.Array.get(splitedPath, Belt.Array.length(splitedPath) - 1)
           switch fileName {
           | Some(fileName) => ImagesApi.uploadToFolder(path, currentDirectoryPath, fileName)
-
           | None => Js.Exn.raiseError("Bad file name")
           }
         })
@@ -114,10 +117,13 @@ let make = () => {
 
   let renderAddButton = if isRootDir {
     <Button variant={#success} onClick={handleAdd}> {"Add new manga"->React.string} </Button>
-  } else if isMangeDir {
+  } else if isMangaDir {
     <Button variant={#success} onClick={handleAdd}> {"Add new chapter"->React.string} </Button>
   } else if isChapterDir {
-    <Button variant={#success} onClick={handleUpload}> {"Upload"->React.string} </Button>
+    <>
+      <Button variant={#success} onClick={handleRead}> {"Read"->React.string} </Button>
+      <Button variant={#success} onClick={handleUpload}> {"Upload"->React.string} </Button>
+    </>
   } else {
     React.null
   }

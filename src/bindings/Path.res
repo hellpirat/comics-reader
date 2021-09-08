@@ -10,3 +10,7 @@
 @module("path") external join2: (string, string) => string = "join"
 
 @module("path") external extname: string => string = "extname"
+
+@module("path") external resolve: string => string = "resolve"
+
+@module("path") external resolve2: (string, string) => string = "resolve"

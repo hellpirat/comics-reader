@@ -5,8 +5,7 @@ let make = () => {
   <MainLayout>
     {switch url.path {
     | list{} => <Directories />
-    | list{mangaId} => <Directories />
-    | list{mangaId, chapterId} => <Directories />
+    | list{"comics", comicsId, chapterId} => <Comics comicsId chapterId />
     | _ => <div> {"Not Found"->React.string} </div>
     }}
   </MainLayout>

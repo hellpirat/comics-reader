@@ -8,8 +8,6 @@ let make = (~comicsId, ~chapterId) => {
 
   let path = `.${root}/${comicsId}/${chapterId}`
 
-  Js.log(path)
-
   React.useEffect0(() => {
     let res: array<string> = ImagesApi.getImages(path)
     setImages(_ => res)

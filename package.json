@@ -7,7 +7,7 @@
     "serve": "vite preview",
     "re:build": "rescript",
     "re:start": "rescript build -w",
-    "el:start": "electron src/electron",
+    "el:start": "electron src/electron/electron",
     "start-all": "concurrently \"npm:dev\" \"npm:re:start\" \"npm:el:start\" "
   },
   "dependencies": {

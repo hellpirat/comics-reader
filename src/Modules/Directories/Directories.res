@@ -47,8 +47,8 @@ let make = () => {
     onClose()
   }
 
-  let handleSave = event => {
-    ReactEvent.Mouse.preventDefault(event)
+  let handleSubmit = event => {
+    ReactEvent.Form.preventDefault(event)
     DirectoriesApi.createDirectory(`${currentDirectoryPath}/${value}`)
     onClose()
   }
@@ -147,10 +147,17 @@ let make = () => {
     <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
       <DirectoriesTable folders={folders} onRowClick={handleRowClick} />
     </div>
-    <Modal title="Add new directory" isOpen={isOpen} onClose={handleClose} onSave={handleSave}>
-      <div className="my-4 text-blueGray-500 text-lg leading-relaxed">
-        <Input placeholder="Directory name..." value onChange={handleInputChange} />
-      </div>
+    <Modal title="Add new directory" isOpen={isOpen} onClose={handleClose}>
+      <form onSubmit={handleSubmit}>
+        <ModalContent>
+          <div className="my-4 text-blueGray-500 text-lg leading-relaxed">
+            <Input
+              required={true} placeholder="Directory name..." value onChange={handleInputChange}
+            />
+          </div>
+        </ModalContent>
+        <ModalFooter onClose={handleClose} />
+      </form>
     </Modal>
   </>
 }

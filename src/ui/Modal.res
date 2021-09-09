@@ -1,7 +1,7 @@
 open Cx
 
 @react.component
-let make = (~isOpen: bool, ~title, ~onClose, ~onSave, ~children) => {
+let make = (~isOpen: bool, ~title, ~onClose, ~children) => {
   let isOpenClassName = switch isOpen {
   | true => "flex"
   | false => "hidden"
@@ -28,12 +28,7 @@ let make = (~isOpen: bool, ~title, ~onClose, ~onSave, ~children) => {
               </span>
             </button>
           </div>
-          <div className="relative p-6 flex-auto"> children </div>
-          <div
-            className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
-            <Button onClick={onClose} variant={#danger}> {"Close"->React.string} </Button>
-            <Button onClick={onSave} variant={#success}> {"Save"->React.string} </Button>
-          </div>
+          children
         </div>
       </div>
     </div>

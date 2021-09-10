@@ -9,7 +9,7 @@ let make = () => {
   let (folders, setFolders) = React.useState(() => [])
   let (value, setValue) = React.useState(() => "")
   let (currentDirectory, setCurrentDirectory) = React.useState(() => ["comics"])
-  let (editableFolder, setEditableFolder) = React.useState(() => None)
+  let (editableDirectory, setEditableDirectory) = React.useState(() => None)
   let (deletableDirectory, setDeletableDirectory) = React.useState(() => None)
 
   let {value: isOpen, onOpen, onClose} = useToggle()
@@ -59,7 +59,7 @@ let make = () => {
     switch found {
     | Some(found) => {
         onOpen()
-        setEditableFolder(_ => Some(found))
+        setEditableDirectory(_ => Some(found))
         setValue(_ => found)
       }
     | None => Js.log("Not found")
@@ -91,11 +91,11 @@ let make = () => {
   let handleSubmit = event => {
     ReactEvent.Form.preventDefault(event)
     let newPath = `${currentDirectoryPath}/${value}`
-    switch editableFolder {
-    | Some(editableFolder) => {
-        let oldPath = `${currentDirectoryPath}/${editableFolder}`
+    switch editableDirectory {
+    | Some(editableDirectory) => {
+        let oldPath = `${currentDirectoryPath}/${editableDirectory}`
         DirectoriesApi.renameDirectory(oldPath, newPath)
-        setEditableFolder(_ => None)
+        setEditableDirectory(_ => None)
       }
     | None => DirectoriesApi.createDirectory(newPath)
     }
@@ -166,8 +166,8 @@ let make = () => {
     React.null
   }
 
-  let modalTitle = switch editableFolder {
-  | Some(editableFolder) => `Rename ${editableFolder}?`
+  let modalTitle = switch editableDirectory {
+  | Some(editableDirectory) => `Rename ${editableDirectory}?`
   | None => "Add new directory"
   }
 
@@ -201,7 +201,7 @@ let make = () => {
       </form>
     </Modal>
     <Modal
-      title="Delete directory?"
+      title="Are you sure you want to delete a directory?"
       isOpen={Belt.Option.isSome(deletableDirectory)}
       onClose={_ => handleCleanDeletable()}>
       <div

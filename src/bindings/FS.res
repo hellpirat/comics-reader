@@ -32,10 +32,8 @@ module Stats = {
 @module("fs") external renameSync: (string, string) => unit = "renameSync"
 
 type rm_options = {
-  force: option<bool>,
-  maxRetries: option<int>,
-  recursive: option<bool>,
-  retryDelay: option<int>,
+  force: bool,
+  recursive: bool,
 }
 
 @module("fs") external rmSync: (string, rm_options) => unit = "rmSync"

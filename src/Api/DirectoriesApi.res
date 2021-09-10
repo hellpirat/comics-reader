@@ -13,7 +13,7 @@ module DirectoriesApi = {
     FS.renameSync(old, new)
   }
 
-  let removeDirectory = directory => {
-    FS.rmSync(directory)
+  let removeDirectory = (directory: string) => {
+    FS.rmSync(directory, {recursive: true, force: true})
   }
 }

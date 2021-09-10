@@ -10,6 +10,7 @@ let make = () => {
   let (value, setValue) = React.useState(() => "")
   let (currentDirectory, setCurrentDirectory) = React.useState(() => ["comics"])
   let (editableFolder, setEditableFolder) = React.useState(() => None)
+  let (deletableDirectory, setDeletableDirectory) = React.useState(() => None)
 
   let {value: isOpen, onOpen, onClose} = useToggle()
 
@@ -21,7 +22,7 @@ let make = () => {
 
   let currentDirectoryPath = makeDirPath(currentDirectory)
 
-  React.useEffect3(() => {
+  React.useEffect4(() => {
     if isChapterDir {
       let res: array<string> = ImagesApi.getImages(currentDirectoryPath)
       setFolders(_ => res)
@@ -31,7 +32,7 @@ let make = () => {
     }
 
     None
-  }, (isOpen, currentDirectory, isChapterDir))
+  }, (isOpen, currentDirectory, isChapterDir, deletableDirectory))
 
   React.useEffect1(() => {
     if !isOpen {
@@ -39,6 +40,8 @@ let make = () => {
     }
     None
   }, [isOpen])
+
+  let handleCleanDeletable = () => setDeletableDirectory(_ => None)
 
   let handleAdd = event => {
     ReactEvent.Mouse.preventDefault(event)
@@ -67,7 +70,20 @@ let make = () => {
     ReactEvent.Mouse.stopPropagation(event)
     let found = Belt.Array.get(folders, index)
     switch found {
-    | Some(found) => Js.log(found)
+    | Some(found) => setDeletableDirectory(_ => Some(found))
+    | None => Js.log("Not found")
+    }
+  }
+
+  let handleDeleteSubmit = event => {
+    ReactEvent.Mouse.preventDefault(event)
+    switch deletableDirectory {
+    | Some(deletableDirectory) => {
+        let path = `${currentDirectoryPath}/${deletableDirectory}`
+        Js.log(path)
+        DirectoriesApi.removeDirectory(path)
+        setDeletableDirectory(_ => None)
+      }
     | None => Js.log("Not found")
     }
   }
@@ -183,6 +199,18 @@ let make = () => {
         </ModalContent>
         <ModalFooter onClose={handleClose} />
       </form>
+    </Modal>
+    <Modal
+      title="Delete directory?"
+      isOpen={Belt.Option.isSome(deletableDirectory)}
+      onClose={_ => handleCleanDeletable()}>
+      <div
+        className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
+        <Button onClick={_ => handleCleanDeletable()} variant={#danger}>
+          {"Close"->React.string}
+        </Button>
+        <Button onClick={handleDeleteSubmit} variant={#success}> {"Delete"->React.string} </Button>
+      </div>
     </Modal>
   </>
 }

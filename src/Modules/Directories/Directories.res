@@ -151,7 +151,7 @@ let make = () => {
   }
 
   let modalTitle = switch editableFolder {
-  | Some(editableFolder) => `Rename ${editableFolder}`
+  | Some(editableFolder) => `Rename ${editableFolder}?`
   | None => "Add new directory"
   }
 

@@ -1,12 +1,12 @@
 @react.component
-let make = (~folders: array<string>, ~onRowClick) => {
-  let handleDelete = event => {
-    ReactEvent.Mouse.stopPropagation(event)
+let make = (~folders: array<string>, ~onRowClick, ~onDelete) => {
+  let handleDelete = (event, index) => {
+    onDelete(event, index)
   }
 
-  let handleEdit = (event) => {
-      ReactEvent.Mouse.stopPropagation(event)
-  } 
+  let handleEdit = event => {
+    ReactEvent.Mouse.stopPropagation(event)
+  }
 
   let tableBody = Belt.Array.mapWithIndex(folders, (index, folder) => {
     <TableRow
@@ -16,7 +16,9 @@ let make = (~folders: array<string>, ~onRowClick) => {
       <TCol className="w-full"> {folder->React.string} </TCol>
       <TCol>
         <Button onClick={handleEdit} variant={#info}> {"Edit"->React.string} </Button>
-        <Button onClick={handleDelete} variant={#danger}> {"Delete"->React.string} </Button>
+        <Button onClick={event => handleDelete(event, index)} variant={#danger}>
+          {"Delete"->React.string}
+        </Button>
       </TCol>
     </TableRow>
   })

@@ -47,6 +47,15 @@ let make = () => {
     onClose()
   }
 
+  let handleDelete = (event, index) => {
+    ReactEvent.Mouse.stopPropagation(event)
+    let found = Belt.Array.get(folders, index)
+    switch found {
+    | Some(found) => Js.log(found)
+    | None => Js.log("Not found")
+    }
+  }
+
   let handleSubmit = event => {
     ReactEvent.Form.preventDefault(event)
     DirectoriesApi.createDirectory(`${currentDirectoryPath}/${value}`)
@@ -65,7 +74,9 @@ let make = () => {
   }
 
   let handleRowClick = (_, directory) => {
-    setCurrentDirectory(prev => Js.Array2.concat(prev, [directory]))
+    if !isChapterDir {
+      setCurrentDirectory(prev => Js.Array2.concat(prev, [directory]))
+    }
   }
 
   let handleBreadcrumbClick = (event, targetIndex) => {
@@ -101,20 +112,6 @@ let make = () => {
     ->ignore
   }
 
-  let renderBreadcrumbs = Belt.Array.mapWithIndex(currentDirectory, (index, directory) => {
-    <>
-      {if index + 1 == lengthDirectories {
-        <li className="pr-4 text-gray-700"> {React.string(directory)} </li>
-      } else {
-        <li className="pr-4">
-          <button type_="button" onClick={event => handleBreadcrumbClick(event, index)}>
-            {React.string(directory)}
-          </button>
-        </li>
-      }}
-    </>
-  })
-
   let renderAddButton = if isRootDir {
     <Button variant={#success} onClick={handleAdd}> {"Add new manga"->React.string} </Button>
   } else if isMangaDir {
@@ -138,14 +135,10 @@ let make = () => {
       {renderAddButton}
     </div>
     <div className="mt-0 mb-2">
-      <nav ariaLabel="breadcrumb">
-        <ol className="flex leading-none text-indigo-600 divide-x divide-indigo-400">
-          {React.array(renderBreadcrumbs)}
-        </ol>
-      </nav>
+      <Breadcrumbs currentDirectory lengthDirectories onBreadcrumbClick={handleBreadcrumbClick} />
     </div>
     <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-      <DirectoriesTable folders={folders} onRowClick={handleRowClick} />
+      <DirectoriesTable folders={folders} onRowClick={handleRowClick} onDelete={handleDelete} />
     </div>
     <Modal title="Add new directory" isOpen={isOpen} onClose={handleClose}>
       <form onSubmit={handleSubmit}>

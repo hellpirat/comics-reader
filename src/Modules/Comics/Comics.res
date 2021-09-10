@@ -1,4 +1,6 @@
 open ImagesApi
+open Webapi.Dom
+open Document
 
 let root = "/comics"
 
@@ -14,6 +16,11 @@ let make = (~comicsId, ~chapterId) => {
     None
   })
 
+  let handleFullScreen = event => {
+    ReactEvent.Mouse.preventDefault(event)
+    document->documentElement->Element.requestFullscreen
+  }
+
   let renderImages = Belt.Array.mapWithIndex(images, (index, image) => {
     <img key={Belt.Int.toString(index)} src={`file://${Path.resolve2(path, image)}`} alt={image} />
   })
@@ -23,7 +30,7 @@ let make = (~comicsId, ~chapterId) => {
       <Button onClick={_ => RescriptReactRouter.push("/")}> {"Back"->React.string} </Button>
       <Button> {"Prev"->React.string} </Button>
       <Button> {"Next"->React.string} </Button>
-      <Button> {"Full Screen"->React.string} </Button>
+      <Button onClick={handleFullScreen}> {"Full Screen"->React.string} </Button>
     </div>
     {React.array(renderImages)}
   </div>

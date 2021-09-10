@@ -184,7 +184,7 @@ let make = () => {
     </div>
     <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
       <DirectoriesTable
-        folders={folders} onRowClick={handleRowClick} onEdit={handleEdit} onDelete={handleDelete}
+        folders isChapterDir onRowClick={handleRowClick} onEdit={handleEdit} onDelete={handleDelete}
       />
     </div>
     <Modal title={modalTitle} isOpen={isOpen} onClose={handleClose}>

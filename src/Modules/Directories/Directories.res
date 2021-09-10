@@ -2,16 +2,14 @@ open DirectoriesApi
 open UseToggle
 open Promise
 open ImagesApi
-
-let makeDirPath = (directories: array<string>) => {
-  Js.Array2.joinWith(directories, "/")
-}
+open DirectoriesUtils
 
 @react.component
 let make = () => {
   let (folders, setFolders) = React.useState(() => [])
   let (value, setValue) = React.useState(() => "")
   let (currentDirectory, setCurrentDirectory) = React.useState(() => ["comics"])
+  let (isEditIndex, setIsEditIndex) = React.useState(() => None)
 
   let {value: isOpen, onOpen, onClose} = useToggle()
 
@@ -32,10 +30,15 @@ let make = () => {
       setFolders(_ => res)
     }
 
-    setValue(_ => "")
-
     None
   }, (isOpen, currentDirectory, isChapterDir))
+
+  React.useEffect1(() => {
+    if !isOpen {
+      setValue(_ => "")
+    }
+    None
+  }, [isOpen])
 
   let handleAdd = event => {
     ReactEvent.Mouse.preventDefault(event)
@@ -45,6 +48,19 @@ let make = () => {
   let handleClose = event => {
     ReactEvent.Mouse.preventDefault(event)
     onClose()
+  }
+
+  let handleEdit = (event, index) => {
+    ReactEvent.Mouse.stopPropagation(event)
+    let found = Belt.Array.get(folders, index)
+    switch found {
+    | Some(found) => {
+        onOpen()
+        setIsEditIndex(_ => Some(found))
+        setValue(_ => found)
+      }
+    | None => Js.log("Not found")
+    }
   }
 
   let handleDelete = (event, index) => {
@@ -58,7 +74,16 @@ let make = () => {
 
   let handleSubmit = event => {
     ReactEvent.Form.preventDefault(event)
-    DirectoriesApi.createDirectory(`${currentDirectoryPath}/${value}`)
+    let newPath = `${currentDirectoryPath}/${value}`
+    switch isEditIndex {
+    | Some(isEditIndex) => {
+        let oldPath = `${currentDirectoryPath}/${isEditIndex}`
+        DirectoriesApi.renameDirectory(oldPath, newPath)
+        setIsEditIndex(_ => None)
+      }
+    | None => DirectoriesApi.createDirectory(newPath)
+    }
+
     onClose()
   }
 
@@ -138,15 +163,21 @@ let make = () => {
       <Breadcrumbs currentDirectory lengthDirectories onBreadcrumbClick={handleBreadcrumbClick} />
     </div>
     <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-      <DirectoriesTable folders={folders} onRowClick={handleRowClick} onDelete={handleDelete} />
+      <DirectoriesTable
+        folders={folders} onRowClick={handleRowClick} onEdit={handleEdit} onDelete={handleDelete}
+      />
     </div>
     <Modal title="Add new directory" isOpen={isOpen} onClose={handleClose}>
       <form onSubmit={handleSubmit}>
         <ModalContent>
           <div className="my-4 text-blueGray-500 text-lg leading-relaxed">
-            <Input
-              required={true} placeholder="Directory name..." value onChange={handleInputChange}
-            />
+            {if isOpen {
+              <Input
+                required={true} placeholder="Directory name..." value onChange={handleInputChange}
+              />
+            } else {
+              React.null
+            }}
           </div>
         </ModalContent>
         <ModalFooter onClose={handleClose} />

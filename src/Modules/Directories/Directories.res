@@ -171,13 +171,9 @@ let make = () => {
       <form onSubmit={handleSubmit}>
         <ModalContent>
           <div className="my-4 text-blueGray-500 text-lg leading-relaxed">
-            {if isOpen {
-              <Input
-                required={true} placeholder="Directory name..." value onChange={handleInputChange}
-              />
-            } else {
-              React.null
-            }}
+            <Input
+              required={true} placeholder="Directory name..." value onChange={handleInputChange}
+            />
           </div>
         </ModalContent>
         <ModalFooter onClose={handleClose} />

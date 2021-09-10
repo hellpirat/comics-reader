@@ -9,7 +9,7 @@ let make = () => {
   let (folders, setFolders) = React.useState(() => [])
   let (value, setValue) = React.useState(() => "")
   let (currentDirectory, setCurrentDirectory) = React.useState(() => ["comics"])
-  let (isEditIndex, setIsEditIndex) = React.useState(() => None)
+  let (editableFolder, setEditableFolder) = React.useState(() => None)
 
   let {value: isOpen, onOpen, onClose} = useToggle()
 
@@ -56,7 +56,7 @@ let make = () => {
     switch found {
     | Some(found) => {
         onOpen()
-        setIsEditIndex(_ => Some(found))
+        setEditableFolder(_ => Some(found))
         setValue(_ => found)
       }
     | None => Js.log("Not found")
@@ -75,11 +75,11 @@ let make = () => {
   let handleSubmit = event => {
     ReactEvent.Form.preventDefault(event)
     let newPath = `${currentDirectoryPath}/${value}`
-    switch isEditIndex {
-    | Some(isEditIndex) => {
-        let oldPath = `${currentDirectoryPath}/${isEditIndex}`
+    switch editableFolder {
+    | Some(editableFolder) => {
+        let oldPath = `${currentDirectoryPath}/${editableFolder}`
         DirectoriesApi.renameDirectory(oldPath, newPath)
-        setIsEditIndex(_ => None)
+        setEditableFolder(_ => None)
       }
     | None => DirectoriesApi.createDirectory(newPath)
     }
@@ -150,6 +150,11 @@ let make = () => {
     React.null
   }
 
+  let modalTitle = switch editableFolder {
+  | Some(editableFolder) => `Rename ${editableFolder}`
+  | None => "Add new directory"
+  }
+
   <>
     <div className="flex items-center justify-between">
       <div className="mt-0 mb-2">
@@ -167,7 +172,7 @@ let make = () => {
         folders={folders} onRowClick={handleRowClick} onEdit={handleEdit} onDelete={handleDelete}
       />
     </div>
-    <Modal title="Add new directory" isOpen={isOpen} onClose={handleClose}>
+    <Modal title={modalTitle} isOpen={isOpen} onClose={handleClose}>
       <form onSubmit={handleSubmit}>
         <ModalContent>
           <div className="my-4 text-blueGray-500 text-lg leading-relaxed">

@@ -1,12 +1,11 @@
 open ImagesApi
 open Webapi.Dom
 open Document
+open Element
 
 let root = "/comics"
 
 type viewType = All | ByPage
-
-// type state = Idle | Loading | Success(MapsDecode.map, array<PointsDecode.point>) | Error(string)
 
 @react.component
 let make = (~comicsId, ~chapterId) => {
@@ -23,12 +22,23 @@ let make = (~comicsId, ~chapterId) => {
   })
 
   let imagesLength = Belt.Array.length(images)
-  Js.log(imagesLength)
-  Js.log(currentPage)
 
   let handleFullScreen = event => {
     ReactEvent.Mouse.preventDefault(event)
     document->documentElement->Element.requestFullscreen
+  }
+
+  let handleNextPage = event => {
+    ReactEvent.Mouse.preventDefault(event)
+    setCurrentPage(prev => prev + 1)
+    document
+    ->documentElement
+    ->Element.scrollToWithOptions({"top": 0.0, "left": 0.0, "behavior": "smooth"})
+  }
+
+  let handlePrevPage = event => {
+    ReactEvent.Mouse.preventDefault(event)
+    setCurrentPage(prev => prev - 1)
   }
 
   let renderImages = Belt.Array.mapWithIndex(images, (index, image) => {
@@ -38,20 +48,22 @@ let make = (~comicsId, ~chapterId) => {
   let renderByPage = () => {
     let pageImage = Belt.Array.get(images, currentPage - 1)
     switch pageImage {
-    | Some(pageImage) => <img src={`file://${Path.resolve2(path, pageImage)}`} alt={pageImage} />
+    | Some(pageImage) =>
+      <div>
+        <img
+          src={`file://${Path.resolve2(path, pageImage)}`} alt={pageImage} onClick={handleNextPage}
+        />
+      </div>
     | None => React.null
     }
   }
 
-  let handleNextPage = event => {
-    ReactEvent.Mouse.preventDefault(event)
-    setCurrentPage(prev => prev + 1)
-  }
-
-  let handlePrevPage = event => {
-    ReactEvent.Mouse.preventDefault(event)
-    setCurrentPage(prev => prev - 1)
-  }
+  let paginationLabel =
+    <div className="flex self-center">
+      {`Current page ${Belt.Int.toString(currentPage)}/${Belt.Int.toString(
+          imagesLength,
+        )}`->React.string}
+    </div>
 
   <div>
     <div className="flex">
@@ -67,6 +79,7 @@ let make = (~comicsId, ~chapterId) => {
           <Button disabled={currentPage == 1} onClick={handlePrevPage}>
             {"Prev"->React.string}
           </Button>
+          paginationLabel
           <Button disabled={currentPage == imagesLength} onClick={handleNextPage}>
             {"Next"->React.string}
           </Button>

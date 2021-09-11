@@ -56,12 +56,24 @@ let make = (~comicsId, ~chapterId) => {
   <div>
     <div className="flex">
       <Button onClick={_ => RescriptReactRouter.push("/")}> {"Back"->React.string} </Button>
-      <Button onClick={_ => setViewType(_ => All)}> {"All"->React.string} </Button>
-      <Button onClick={_ => setViewType(_ => ByPage)}> {"By Page"->React.string} </Button>
-      <Button disabled={currentPage == 1} onClick={handlePrevPage}> {"Prev"->React.string} </Button>
-      <Button disabled={currentPage == imagesLength} onClick={handleNextPage}>
-        {"Next"->React.string}
+      <Button disabled={viewType == All} onClick={_ => setViewType(_ => All)}>
+        {"All"->React.string}
       </Button>
+      <Button disabled={viewType == ByPage} onClick={_ => setViewType(_ => ByPage)}>
+        {"By Page"->React.string}
+      </Button>
+      {if viewType == ByPage {
+        <>
+          <Button disabled={currentPage == 1} onClick={handlePrevPage}>
+            {"Prev"->React.string}
+          </Button>
+          <Button disabled={currentPage == imagesLength} onClick={handleNextPage}>
+            {"Next"->React.string}
+          </Button>
+        </>
+      } else {
+        React.null
+      }}
       <Button onClick={handleFullScreen}> {"Full Screen"->React.string} </Button>
     </div>
     {if viewType == All {

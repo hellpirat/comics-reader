@@ -1,7 +1,6 @@
 open ImagesApi
 open Webapi.Dom
 open Document
-open Element
 
 let root = "/comics"
 

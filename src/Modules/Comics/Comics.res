@@ -2,11 +2,16 @@ open ImagesApi
 open Webapi.Dom
 open Document
 open KeyboardEvent
+open Select
 // open Window
 
 let root = "/comics"
 
 type viewType = All | ByPage
+
+// List style
+// Paged style
+// select page
 
 @react.component
 let make = (~comicsId, ~chapterId) => {
@@ -24,7 +29,7 @@ let make = (~comicsId, ~chapterId) => {
     None
   })
 
-  let goTonextPage = () => {
+  let goToNextPage = () => {
     setCurrentPage(prev => {
       let nextState = prev + 1
       if nextState < imagesLength + 1 {
@@ -53,7 +58,7 @@ let make = (~comicsId, ~chapterId) => {
     let key = event->key
 
     if key == "ArrowRight" {
-      goTonextPage()
+      goToNextPage()
     }
 
     if key == "ArrowLeft" {
@@ -76,12 +81,17 @@ let make = (~comicsId, ~chapterId) => {
 
   let handleNextPage = event => {
     ReactEvent.Mouse.preventDefault(event)
-    goTonextPage()
+    goToNextPage()
   }
 
   let handlePrevPage = event => {
     ReactEvent.Mouse.preventDefault(event)
     goToPrevPage()
+  }
+
+  let handlePaginationSelectChange = event => {
+    let value = ReactEvent.Form.target(event)["value"]
+    setCurrentPage(_ => value)
   }
 
   let renderImages = Belt.Array.mapWithIndex(images, (index, image) => {
@@ -101,28 +111,39 @@ let make = (~comicsId, ~chapterId) => {
     }
   }
 
-  let paginationLabel =
-    <div className="flex self-center">
-      {`Current page ${Belt.Int.toString(currentPage)}/${Belt.Int.toString(
-          imagesLength,
-        )}`->React.string}
-    </div>
+  let paginationOptions = React.useMemo1(() => {
+    let res = Belt.Array.makeBy(imagesLength, index => index + 1)
+    Belt.Array.map(res, item => {
+      let result: Select.optionSelect = {
+        label: Belt.Int.toString(item),
+        value: Belt.Int.toString(item),
+      }
+      result
+    })
+  }, [imagesLength])
 
   <div>
-    <div className="flex">
+    <div className="flex items-center">
       <Button onClick={_ => RescriptReactRouter.push("/")}> {"Back"->React.string} </Button>
       <Button disabled={viewType == All} onClick={_ => setViewType(_ => All)}>
-        {"All"->React.string}
+        {"List style"->React.string}
       </Button>
       <Button disabled={viewType == ByPage} onClick={_ => setViewType(_ => ByPage)}>
-        {"By Page"->React.string}
+        {"Paged style"->React.string}
       </Button>
       {if viewType == ByPage {
         <>
           <Button disabled={currentPage == 1} onClick={handlePrevPage}>
             {"Prev"->React.string}
           </Button>
-          paginationLabel
+          <div className="relative text-gray-700 w-44">
+            <Select
+              value={Belt.Int.toString(currentPage)}
+              name="pagination"
+              onChange={handlePaginationSelectChange}
+              options={paginationOptions}
+            />
+          </div>
           <Button disabled={currentPage == imagesLength} onClick={handleNextPage}>
             {"Next"->React.string}
           </Button>

@@ -7,6 +7,8 @@ function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    title: "Comics Reader App",
+
     webPreferences: {
       // https://www.electronjs.org/docs/tutorial/security#isolation-for-untrusted-content
       nodeIntegration: true,
